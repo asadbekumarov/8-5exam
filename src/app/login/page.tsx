@@ -2,7 +2,7 @@
 import useAuth from "@/components/hooks/useAuth";
 import { useState } from "react";
 import { IoPerson } from "react-icons/io5";
-import { useRouter } from "next/navigation"; 
+import { useRouter } from "next/navigation";
 
 function Login() {
   const router = useRouter();
@@ -17,10 +17,6 @@ function Login() {
       router.push("/dashboard");
     }
   };
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <div className="flex flex-col items-center justify-center mt-14">
