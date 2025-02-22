@@ -1,19 +1,36 @@
 "use client";
 import { FaCode } from "react-icons/fa6";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 
 const Header: React.FC = () => {
-  const token: string | null = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+  const [token, setToken] = useState<string | null>(null);
   const pathname = usePathname();
   const router = useRouter();
 
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const savedToken = localStorage.getItem("token");
+      console.log("Token from localStorage:", savedToken);
+
+      if (savedToken) {
+        try {
+          setToken(savedToken);
+        } catch (error) {
+          console.error("Invalid token:", error);
+          setToken(null);
+        }
+      }
+    }
+  }, []);
+
   const logOut = (): void => {
     if (typeof window !== "undefined") {
-      localStorage.removeItem("accessToken");
+      localStorage.removeItem("token");
+      setToken(null);
     }
-    router.push("/");
+    router.replace("/");
   };
 
   return (
@@ -30,8 +47,8 @@ const Header: React.FC = () => {
           <div className="flex items-center gap-5">
             <Link
               className={`${
-                pathname === "/developers" ? "active" : ""
-              } text-base leading-7 text-white font-semibold hover:text-[#17a2b8]`}
+                pathname === "/developers" ? "text-[#17a2b8]" : "text-white"
+              } text-base leading-7 font-semibold hover:text-[#17a2b8]`}
               href="/developers"
             >
               Developers
@@ -40,16 +57,16 @@ const Header: React.FC = () => {
               <div className="flex items-center gap-5">
                 <Link
                   className={`${
-                    pathname === "/register" ? "active" : ""
-                  } text-base leading-7 text-white font-semibold hover:text-[#17a2b8]`}
+                    pathname === "/register" ? "text-[#17a2b8]" : "text-white"
+                  } text-base leading-7 font-semibold hover:text-[#17a2b8]`}
                   href="/register"
                 >
                   Register
                 </Link>
                 <Link
                   className={`${
-                    pathname === "/login" ? "active" : ""
-                  } text-base leading-7 text-white font-semibold hover:text-[#17a2b8]`}
+                    pathname === "/login" ? "text-[#17a2b8]" : "text-white"
+                  } text-base leading-7 font-semibold hover:text-[#17a2b8]`}
                   href="/login"
                 >
                   Login
@@ -59,16 +76,16 @@ const Header: React.FC = () => {
               <div className="flex items-center gap-5">
                 <Link
                   className={`${
-                    pathname === "/posts" ? "active" : ""
-                  } text-base leading-7 text-white font-semibold hover:text-[#17a2b8]`}
+                    pathname === "/posts" ? "text-[#17a2b8]" : "text-white"
+                  } text-base leading-7 font-semibold hover:text-[#17a2b8]`}
                   href="/posts"
                 >
                   Posts
                 </Link>
                 <Link
                   className={`${
-                    pathname === "/dashboard" ? "active" : ""
-                  } text-base leading-7 text-white font-semibold hover:text-[#17a2b8]`}
+                    pathname === "/dashboard" ? "text-[#17a2b8]" : "text-white"
+                  } text-base leading-7 font-semibold hover:text-[#17a2b8]`}
                   href="/dashboard"
                 >
                   Dashboard
@@ -77,7 +94,7 @@ const Header: React.FC = () => {
                   onClick={logOut}
                   className="text-base leading-7 text-white font-semibold hover:text-[#17a2b8]"
                 >
-                  logOut {">"}
+                  LogOut {">"}
                 </button>
               </div>
             )}

@@ -13,8 +13,10 @@ function Register() {
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await register(name, email, password);
-    if (!error) {
+    const response = await register(name, email, password);
+
+    if (!error && response) {
+      localStorage.setItem("token", JSON.stringify({ name }));
       router.push("/dashboard");
     }
   };
@@ -24,7 +26,7 @@ function Register() {
   }
 
   return (
-    <div className="flex flex-col items-center  justify-center w-full mt-14">
+    <div className="flex flex-col items-center justify-center w-full mt-14">
       <div>
         <h1 className="font-bold text-5xl leading-[58px] text-[#17a2b8]">
           Sign Up
