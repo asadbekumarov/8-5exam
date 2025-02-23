@@ -9,15 +9,25 @@ function Register() {
   const { loading, register, error } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [name, setName] = useState("");
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const response = await register(name, email, password);
 
-    if (!error && response) {
-      localStorage.setItem("token", JSON.stringify({ name }));
-      router.push("/dashboard");
+    if (password !== confirmPassword) {
+      console.log("xato con poass");
+      return;
+    }
+
+    try {
+      const response = await register(name, email, password);
+      if (response && !error) {
+        localStorage.setItem("token", JSON.stringify({ name }));
+        router.push("/dashboard");
+      }
+    } catch (err) {
+      console.error("Registration failed:", err);
     }
   };
 
@@ -47,6 +57,7 @@ function Register() {
               placeholder="Full Name"
               value={name}
               onChange={(e) => setName(e.target.value)}
+              required
             />
             <input
               className="py-2 px-3 w-[1200px] border"
@@ -54,6 +65,7 @@ function Register() {
               placeholder="Email Address"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              required
             />
             <input
               className="py-2 px-3 w-[1200px] border"
@@ -61,13 +73,22 @@ function Register() {
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+            <input
+              className="py-2 px-3 w-[1200px] border"
+              type="password"
+              placeholder="Confirm Password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
             />
             <button className="bg-[#17a2b8] py-2 px-4 text-white" type="submit">
               {loading ? "Loading..." : "Register"}
             </button>
             <p className="text-base leading-6 pt-5">
               Already have an account?
-              <span className="text-[#17a2b8] text-base leading-6">
+              <span className="text-[#17a2b8] text-base leading-6 cursor-pointer">
                 {" "}
                 Sign In
               </span>
