@@ -44,7 +44,6 @@ const Edu = () => {
       <p className="text-gray-600 mt-2">
         🔧 Add any school or bootcamp that you have attended
       </p>
-      <div></div>
       <form onSubmit={Edu} className="mt-6">
         <input
           type="text"
