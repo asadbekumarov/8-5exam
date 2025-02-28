@@ -11,21 +11,23 @@ function useAuth() {
   const router = useRouter();
 
   async function getMe() {
+    setLoading(true);
+    setError("");
     try {
-      setLoading(true);
-      setError("");
       const token = localStorage.getItem("token");
-      if (!token) return;
+      if (!token) {
+        setUser(null);
+        return;
+      }
 
-      let res = await axios.get(baseUrl + "auth/me", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+      const res = await axios.get(`${baseUrl}auth/me`, {
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       setUser(res.data);
     } catch (error: any) {
-      setError(error.message);
+      setError(error.response?.data?.message || "Failed to fetch user data");
+      setUser(null);
     } finally {
       setLoading(false);
     }
@@ -36,43 +38,44 @@ function useAuth() {
   }, []);
 
   async function login(email: string, password: string) {
+    setLoading(true);
+    setError("");
+
     try {
-      setLoading(true);
-      let res = await axios.post(
-        baseUrl + "auth",
+      const res = await axios.post(
+        `${baseUrl}auth`,
         { email, password },
-        {
-          headers: { "Content-Type": "application/json" },
-        }
+        { headers: { "Content-Type": "application/json" } }
       );
+
       if (res.status === 200) {
         localStorage.setItem("token", res.data.token);
         await getMe();
         router.push("/dashboard");
       }
     } catch (error: any) {
-      setError(error.message);
+      setError(error.response?.data?.message || "Login failed");
     } finally {
       setLoading(false);
     }
   }
-
   async function register(name: string, email: string, password: string) {
+    setLoading(true);
+    setError("");
+
     try {
-      setLoading(true);
-      let res = await axios.post(
-        baseUrl + "users",
+      const res = await axios.post(
+        `${baseUrl}users`,
         { name, email, password },
-        {
-          headers: { "Content-Type": "application/json" },
-        }
+        { headers: { "Content-Type": "application/json" } }
       );
+
       if (res.status === 200) {
         localStorage.setItem("token", res.data.token);
         router.push("/dashboard");
       }
     } catch (error: any) {
-      setError(error.message);
+      setError(error.response?.data?.message || "Registration failed");
     } finally {
       setLoading(false);
     }
@@ -83,7 +86,6 @@ function useAuth() {
     setUser(null);
     router.push("/login");
   }
-
   return { login, register, logOut, user, error, loading };
 }
 

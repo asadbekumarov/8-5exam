@@ -12,11 +12,17 @@ export default function useFetch<T>(url: string) {
       setError("");
       setLoading(true);
 
-      const token = localStorage.getItem("token"); 
+      const token = localStorage.getItem("token");
+      console.log("Yuborilayotgan token:", token); // ✅ Tokenni tekshirish
+
+      if (!token) {
+        setError("Token topilmadi, iltimos login qiling!");
+        return;
+      }
 
       let res = await axios.get(baseUrl + url, {
         headers: {
-          "x-auth-token": token ? token : "",  
+          "x-auth-token": token,
           "Content-Type": "application/json",
         },
       });
@@ -27,6 +33,7 @@ export default function useFetch<T>(url: string) {
         setError("Ma'lumot olishda xatolik yuz berdi");
       }
     } catch (error: any) {
+      console.log("Xato tafsilotlari:", error.response);
       setError(error.response?.data?.message || "Xatolik yuz berdi");
     } finally {
       setLoading(false);

@@ -1,141 +1,123 @@
 "use client";
 import { baseUrl } from "../../components/utils/url";
 import axios from "axios";
-import { IoPerson } from "react-icons/io5";
-import { useState, FormEvent } from "react";
-interface FormElements extends HTMLFormControlsCollection {
-  school: HTMLInputElement;
-  degree: HTMLInputElement;
-  fieldOfStudy: HTMLInputElement;
-  fromDate: HTMLInputElement;
-  toDate: HTMLInputElement;
-  des: HTMLInputElement;
-}
-interface FormElement extends HTMLFormElement {
-  elements: FormElements;
-}
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
-function Edu() {
+const Edu = () => {
+  const [current, setCurrent] = useState(false);
+  const router = useRouter();
+  const [school, setSchool] = useState<string>("");
+  const [degree, setDegree] = useState<string>("");
+  const [fieldofstudy, setFieldofstudy] = useState<string>("");
+  const [from, setFrom] = useState<string>("");
+  const [to, setTo] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
   const [currentJob, setCurrentJob] = useState<boolean>(false);
 
-  const onSubmit = async (e: FormEvent<FormElement>) => {
+  const Edu = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    const form = e.currentTarget.elements;
-
     try {
-      const response = await axios.put(`${baseUrl}/profile/education`, {
-        school: form.school.value,
-        degree: form.degree.value,
-        fieldOfStudy: form.fieldOfStudy.value,
-        from: form.fromDate.value,
-        to: currentJob ? null : form.toDate.value,
-        description: form.des.value,
-      });
-
-      console.log("Success:", response.data);
+      const res = await axios.put(
+        `${baseUrl}profile/education`,
+        { school, degree, fieldofstudy, from, to },
+        {
+          headers: {
+            "x-auth-token": localStorage.getItem("token"),
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log(res.data);
+      if (res.status === 200) {
+        router.push("/dashboard");
+      }
     } catch (error: any) {
-      console.error("Error:", error.response?.data || error.message);
+      console.error(error.response?.data || error);
     }
   };
 
   return (
-    <div className="max-w-[800px] m-auto p-4 text-center">
-      <div className="flex justify-center flex-col items-start gap-5 mt-4">
-        <h1 className="font-bold text-5xl text-[#17a2b8] pt-9">
-          Add Your Education
-        </h1>
-        <div className="flex items-center gap-2">
-          <IoPerson className="text-2xl" />
-          <p className="text-xl">
-            Add any school or bootcamp that you have attended
-          </p>
+    <div className="max-w-4xl mx-auto p-6 bg-white shadow-md rounded-lg mt-10">
+      <h1 className="text-3xl font-bold text-[#0f3352]">Add Your Education</h1>
+      <p className="text-gray-600 mt-2">
+        🔧 Add any school or bootcamp that you have attended
+      </p>
+      <form onSubmit={Edu} className="mt-6">
+        <input
+          type="text"
+          value={school}
+          onChange={(e) => setSchool(e.target.value)}
+          placeholder="* School or Bootcamp"
+          className="w-full p-2 border rounded-md mb-4"
+        />
+        <input
+          type="text"
+          value={degree}
+          onChange={(e) => setDegree(e.target.value)}
+          placeholder="* Degree or Certificate"
+          className="w-full p-2 border rounded-md mb-4"
+        />
+        <input
+          type="text"
+          value={fieldofstudy}
+          onChange={(e) => setFieldofstudy(e.target.value)}
+          placeholder="Field of Study"
+          className="w-full p-2 border rounded-md mb-4"
+        />
+
+        <label className="block text-gray-700">From Date</label>
+        <input
+          type="date"
+          value={from}
+          onChange={(e) => setFrom(e.target.value)}
+          className="w-full p-2 border rounded-md mb-4"
+        />
+
+        <div className="flex items-center mb-4">
+          <input
+            type="checkbox"
+            checked={current}
+            onChange={() => setCurrent(!current)}
+            className="mr-2"
+          />
+          <span>Current School</span>
         </div>
-        <form
-          className="w-[800px] flex flex-col items-start gap-6"
-          onSubmit={onSubmit}
-        >
-          <div className="flex flex-col items-start w-full">
+
+        {!current && (
+          <>
+            <label className="block text-gray-700">To Date</label>
             <input
-              name="school"
-              className="w-full border py-2 px-4"
-              placeholder="* School or Bootcamp"
-              type="text"
-              required
-            />
-            <p className="text-xs leading-5">
-              Give us an idea of where you studied
-            </p>
-          </div>
-          <div className="flex flex-col items-start w-full">
-            <input
-              name="degree"
-              className="w-full border py-2 px-4"
-              placeholder="* Degree or Certificate"
-              type="text"
-              required
-            />
-            <p className="text-xs leading-5">
-              Example: Bachelor's in Computer Science
-            </p>
-          </div>
-          <div className="flex flex-col items-start w-full">
-            <input
-              name="fieldOfStudy"
-              className="w-full border py-2 px-4"
-              placeholder="Field of Study"
-              type="text"
-            />
-            <p className="text-xs leading-5">Example: Software Engineering</p>
-          </div>
-          <div className="flex flex-col items-start w-full">
-            <p className="text-base font-bold leading-6">From Date</p>
-            <input
-              name="fromDate"
-              className="w-full border py-2 px-4"
               type="date"
-              required
+              value={to}
+              onChange={(e) => setTo(e.target.value)}
+              className="w-full p-2 border rounded-md mb-4"
             />
-            <span className="flex items-center py-7 gap-2">
-              <input
-                type="checkbox"
-                checked={currentJob}
-                onChange={() => setCurrentJob(!currentJob)}
-              />
-              <p> Currently Studying</p>
-            </span>
-            {!currentJob && (
-              <>
-                <p className="text-base font-bold leading-6">To Date</p>
-                <input
-                  name="toDate"
-                  className="w-full border py-2 px-4"
-                  type="date"
-                />
-              </>
-            )}
-          </div>
-          <div className="flex flex-col items-start w-full">
-            <input
-              name="des"
-              className="w-full border pt-2 pb-7 px-4"
-              placeholder="Program Description"
-              type="text"
-            />
-            <p className="text-xs leading-5">
-              Tell us a little about your studies
-            </p>
-          </div>
-          <div className="flex items-center gap-8 pt-5">
-            <button type="submit" className="bg-[#17a2b8] text-white py-2 px-4">
-              Submit
+          </>
+        )}
+
+        <textarea
+          placeholder="Program Description"
+          className="w-full p-2 border rounded-md mb-4 h-24"
+        ></textarea>
+
+        <div className="flex space-x-4">
+          <button
+            className="px-4 py-2 bg-[#0f3352] text-white rounded-md"
+            type="submit"
+          >
+            Submit
+          </button>
+          <Link href="/dashboard">
+            <button className="px-4 py-2 bg-gray-500 text-white rounded-md">
+              Go Back
             </button>
-            <button type="button">Go Back</button>
-          </div>
-        </form>
-      </div>
+          </Link>
+        </div>
+      </form>
     </div>
   );
-}
+};
 
 export default Edu;

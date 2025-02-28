@@ -1,137 +1,131 @@
 "use client";
-import { IoPerson } from "react-icons/io5";
-import { useState, FormEvent } from "react";
+import { baseUrl } from "../../components/utils/url";
 import axios from "axios";
-import { baseUrl } from "@/components/utils/url";
-const Addan = () => {
-  const [formData, setFormData] = useState({
-    job: "",
-    company: "",
-    location: "",
-    skills: "",
-    fromDate: "",
-    toDate: "",
-    description: "",
-  });
-  const [currentJob, setCurrentJob] = useState(false);
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+const AddExperience = () => {
+  const router = useRouter();
+  const [title, setTitle] = useState<string>("");
+  const [company, setCompany] = useState<string>("");
+  const [location, setLocation] = useState<string>("");
+  const [from, setFrom] = useState<string>("");
+  const [to, setTo] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
+  const [currentJob, setCurrentJob] = useState<boolean>(false);
 
-  const onSubmit = async (e: FormEvent) => {
+  const addexp = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await axios.put(`${baseUrl}profile/experience`, {
-        ...formData,
-        toDate: currentJob ? null : formData.toDate,
-      });
-      console.log("Success:", response.data);
+      const res = await axios.put(
+        `${baseUrl}profile/experience`,
+        { title, company, from, to },
+        {
+          headers: {
+            "x-auth-token": localStorage.getItem("token"),
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log(res.data);
+      if (res.status === 200) {
+        router.push("/dashboard");
+      }
     } catch (error: any) {
-      console.error("Error:", error.response?.data || error.message);
+      console.error(error.response?.data || error);
     }
   };
 
   return (
-    <div className="max-w-[800px] m-auto p-4 text-center">
-      <div className="flex justify-center flex-col items-start gap-5 mt-4">
-        <h1 className="font-bold text-5xl text-[#17a2b8] pt-9">
-          Add Experience
-        </h1>
-        <div className="flex items-center gap-2">
-          <IoPerson className="text-2xl" />
-          <p className="text-xl">
-            Add any developer/programming positions that you have had in the
-            past
-          </p>
+    <div className="max-w-4xl mx-auto p-6">
+      <h1 className="text-4xl font-bold text-[#0f3352]">Add An Experience</h1>
+      <p className="text-gray-600 mt-2">
+        💼 Add any developer/programming positions that you have had in the past
+      </p>
+
+      <form onSubmit={addexp} className="mt-6 space-y-4">
+        <input
+          type="text"
+          placeholder="* Job Title"
+          required
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          className="w-full p-2 border rounded-md"
+        />
+        <input
+          type="text"
+          placeholder="* Company"
+          required
+          value={company}
+          onChange={(e) => setCompany(e.target.value)}
+          className="w-full p-2 border rounded-md"
+        />
+        <input
+          type="text"
+          placeholder="Location"
+          value={location}
+          onChange={(e) => setLocation(e.target.value)}
+          className="w-full p-2 border rounded-md"
+        />
+
+        <div className="flex flex-col gap-2">
+          <label className="text-gray-700">From Date</label>
+          <input
+            type="date"
+            required
+            value={from}
+            onChange={(e) => setFrom(e.target.value)}
+            className="w-full p-2 border rounded-md"
+          />
         </div>
-        <form
-          className="w-[800px] flex flex-col items-start gap-6"
-          onSubmit={onSubmit}
-        >
-          <div className="flex flex-col items-start w-full">
+
+        <div className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            checked={currentJob}
+            onChange={() => setCurrentJob(!currentJob)}
+            className="h-4 w-4"
+          />
+          <label className="text-gray-700">Current Job</label>
+        </div>
+
+        {!currentJob && (
+          <div className="flex flex-col gap-2">
+            <label className="text-gray-700">To Date</label>
             <input
-              name="job"
-              value={formData.job}
-              onChange={onChange}
-              className="w-full border py-2 px-4"
-              placeholder="Job Title"
-              type="text"
-              required
-            />
-          </div>
-          <div className="flex flex-col items-start w-full">
-            <input
-              name="company"
-              value={formData.company}
-              onChange={onChange}
-              className="w-full border py-2 px-4"
-              placeholder="Company"
-              type="text"
-              required
-            />
-          </div>
-          <div className="flex flex-col items-start w-full">
-            <input
-              name="location"
-              value={formData.location}
-              onChange={onChange}
-              className="w-full border py-2 px-4"
-              placeholder="Location"
-              type="text"
-            />
-          </div>
-          <div className="flex flex-col items-start w-full">
-            <p className="text-base font-bold leading-6">From Date</p>
-            <input
-              name="fromDate"
-              value={formData.fromDate}
-              onChange={onChange}
-              className="w-full border py-2 px-4"
               type="date"
-              required
-            />
-            <span className="flex items-center py-7 gap-2">
-              <input
-                type="checkbox"
-                checked={currentJob}
-                onChange={() => setCurrentJob(!currentJob)}
-              />
-              <p> Current Job</p>
-            </span>
-            {!currentJob && (
-              <>
-                <p className="text-base font-bold leading-6">To Date</p>
-                <input
-                  name="toDate"
-                  value={formData.toDate}
-                  onChange={onChange}
-                  className="w-full border py-2 px-4"
-                  type="date"
-                />
-              </>
-            )}
-          </div>
-          <div className="flex flex-col items-start w-full">
-            <input
-              name="description"
-              value={formData.description}
-              onChange={onChange}
-              className="w-full border pt-2 pb-7 px-4"
-              placeholder="Job Description"
-              type="text"
+              value={to}
+              onChange={(e) => setTo(e.target.value)}
+              className="w-full p-2 border rounded-md"
             />
           </div>
-          <div className="flex items-center gap-8 pt-5">
-            <button type="submit" className="bg-[#17a2b8] text-white py-2 px-4">
-              Submit
-            </button>
-            <button type="button">Go Back</button>
-          </div>
-        </form>
-      </div>
+        )}
+
+        <textarea
+          placeholder="Job Description"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          className="w-full p-2 border rounded-md h-32"
+        />
+
+        <div className="flex gap-4">
+          <button
+            type="submit"
+            className="bg-[#0f3352] text-white px-4 py-2 rounded-md hover:bg-[#0d2a45]"
+          >
+            Submit
+          </button>
+          <button
+            type="button"
+            onClick={() => router.back()}
+            className="bg-gray-300 px-4 py-2 rounded-md hover:bg-gray-400"
+          >
+            Go Back
+          </button>
+        </div>
+      </form>
     </div>
   );
 };
 
-export default Addan;
+export default AddExperience;

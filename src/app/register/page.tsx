@@ -11,19 +11,21 @@ function Register() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [name, setName] = useState("");
+  const [passwordError, setPasswordError] = useState("");
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (password !== confirmPassword) {
-      console.log("xato con poass");
+      setPasswordError("Passwords do not match!");
       return;
     }
+    setPasswordError("");
 
     try {
       const response = await register(name, email, password);
       if (response && !error) {
-        localStorage.setItem("token", JSON.stringify({ name }));
+        localStorage.setItem("authMethod", "register"); 
         router.push("/dashboard");
       }
     } catch (err) {
@@ -31,70 +33,57 @@ function Register() {
     }
   };
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
   return (
-    <div className="flex flex-col items-center justify-center w-full mt-14">
-      <div>
-        <h1 className="font-bold text-5xl leading-[58px] text-[#17a2b8]">
-          Sign Up
-        </h1>
-        <div className="flex items-center gap-2">
-          <IoPerson className="font-black text-2xl leading-6" />
-          <p className="font-normal text-2xl leading-10">Create Your Account</p>
+    <div className="flex flex-col items-center justify-center min-h-screen">
+      <div className="w-full max-w-md bg-white p-6 rounded-lg shadow-lg">
+        <h1 className="text-4xl font-bold text-[#17a2b8] text-center">Sign Up</h1>
+        <div className="flex items-center gap-2 mt-2">
+          <IoPerson className="text-2xl" />
+          <p className="text-lg">Create Your Account</p>
         </div>
-        {error && <div className="text-red-500">{error}</div>}
-        <div className="w-[1200px]">
-          <form
-            onSubmit={onSubmit}
-            className="flex flex-col gap-3 pt-10 items-start"
-          >
-            <input
-              className="py-2 px-3 w-[1200px] border"
-              type="text"
-              placeholder="Full Name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-            />
-            <input
-              className="py-2 px-3 w-[1200px] border"
-              type="email"
-              placeholder="Email Address"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-            <input
-              className="py-2 px-3 w-[1200px] border"
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-            <input
-              className="py-2 px-3 w-[1200px] border"
-              type="password"
-              placeholder="Confirm Password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              required
-            />
-            <button className="bg-[#17a2b8] py-2 px-4 text-white" type="submit">
-              {loading ? "Loading..." : "Register"}
-            </button>
-            <p className="text-base leading-6 pt-5">
-              Already have an account?
-              <span className="text-[#17a2b8] text-base leading-6 cursor-pointer">
-                {" "}
-                Sign In
-              </span>
-            </p>
-          </form>
-        </div>
+        {error && <div className="text-red-500 mt-2">{error}</div>}
+        {passwordError && <div className="text-red-500 mt-2">{passwordError}</div>}
+        <form onSubmit={onSubmit} className="flex flex-col gap-3 mt-4">
+          <input
+            className="py-2 px-3 border rounded w-full"
+            type="text"
+            placeholder="Full Name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+          />
+          <input
+            className="py-2 px-3 border rounded w-full"
+            type="email"
+            placeholder="Email Address"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+          <input
+            className="py-2 px-3 border rounded w-full"
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          <input
+            className="py-2 px-3 border rounded w-full"
+            type="password"
+            placeholder="Confirm Password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            required
+          />
+          <button className="bg-[#17a2b8] py-2 text-white rounded" type="submit">
+            {loading ? "Loading..." : "Register"}
+          </button>
+        </form>
+        <p className="text-sm mt-4 text-center">
+          Already have an account?
+          <span className="text-[#17a2b8] cursor-pointer"> Sign In</span>
+        </p>
       </div>
     </div>
   );
