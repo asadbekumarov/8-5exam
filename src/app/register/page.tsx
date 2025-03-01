@@ -1,4 +1,4 @@
-"use client"; .
+"use client";
 import useAuth from "@/components/hooks/useAuth";
 import { useState } from "react"; 
 import { IoPerson } from "react-icons/io5"; 
