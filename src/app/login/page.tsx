@@ -3,20 +3,23 @@ import useAuth from "@/components/hooks/useAuth";
 import { useState } from "react";
 import { IoPerson } from "react-icons/io5";
 import { useRouter } from "next/navigation";
-
 function Login() {
   const router = useRouter();
   const { loading, login, error } = useAuth();
+  // `useAuth` hookidan `loading`, `login` va `error` qiymatlarini olib ishlatamiz.
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     await login(email, password);
+    // `login` funksiyasini chaqirib, foydalanuvchini tizimga kiritishga harakat qilamiz.
+
     if (!error) {
       router.push("/dashboard");
+      // Agar xatolik bo‘lmasa, foydalanuvchini `/dashboard` sahifasiga yo‘naltiramiz.
     }
   };
+
   return (
     <div className="flex flex-col items-center justify-center mt-14">
       <div>
@@ -29,7 +32,6 @@ function Login() {
             Sign Into Your Account
           </p>
         </div>
-        {error && <div className="text-red-500">{error}</div>}
         <div>
           <form
             onSubmit={onSubmit}
@@ -65,5 +67,4 @@ function Login() {
     </div>
   );
 }
-
 export default Login;

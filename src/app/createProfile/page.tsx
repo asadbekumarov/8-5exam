@@ -6,9 +6,10 @@ import { IoPerson } from "react-icons/io5";
 import { useRouter } from "next/navigation";
 
 export default function CreateProfile() {
-  const router = useRouter();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const router = useRouter(); // Router uchun obyektini yaratish
+  const [loading, setLoading] = useState(false); 
+  const [error, setError] = useState<string | null>(null); 
+
   const [status, setStatus] = useState<string>("");
   const [company, setCompany] = useState<string>("");
   const [website, setWebsite] = useState<string>("");
@@ -17,11 +18,13 @@ export default function CreateProfile() {
   const [githubusername, setGithubUsername] = useState<string>("");
   const [bio, setBio] = useState<string>("");
 
+  // Formani yuborish funksiyasi
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+    e.preventDefault(); 
     setLoading(true);
     setError(null);
 
+    // Yangi profil obyektini yaratish
     const newProfile = {
       status,
       company,
@@ -33,20 +36,19 @@ export default function CreateProfile() {
     };
 
     try {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("token"); 
       if (!token) throw new Error("No token found. Please login again.");
 
+      // Axios bilan serverga soorov yuborish
       const res = await axios.post(`${baseUrl}profile`, newProfile, {
         headers: {
           "x-auth-token": token,
           "Content-Type": "application/json",
         },
       });
-      console.log("Profile Created", res);
-      router.push("/dashboard");
+      router.push("/dashboard"); // Profil yaratilgandan so‘ng dasboard sahifasiga yo‘naltirish
     } catch (err: any) {
       console.error("Xatolik:", err);
-      console.error("Error creating profile:", err);
       setError(
         err.response?.data?.message ||
           "Failed to create profile. Please try again."
@@ -68,7 +70,6 @@ export default function CreateProfile() {
         </p>
       </div>
       <p>* = required field</p>
-      {error && <p className="text-red-500">{error}</p>}
       <form
         className="w-[800px] flex flex-col items-start gap-6"
         onSubmit={onSubmit}

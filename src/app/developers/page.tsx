@@ -6,7 +6,7 @@ import { FaRegThumbsUp, FaRegCommentDots } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import { IoPerson } from "react-icons/io5";
 import Link from "next/link";
-
+// Profile interfeysi komponentga kelayotgan profiles malumotlari
 interface Profile {
   _id: string;
   user: {
@@ -25,7 +25,6 @@ export default function Developers() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
-
   useEffect(() => {
     const fetchProfiles = async () => {
       try {
@@ -40,11 +39,9 @@ export default function Developers() {
     };
 
     fetchProfiles();
+    // "fetchProfiles" funksiyasini chaqirish
   }, []);
-
   if (loading) return <div>Loading profiles...</div>;
-  if (error) return <div>{error}</div>;
-
   return (
     <div className="max-w-[800px] m-auto p-4 text-center">
       <h1 className="font-bold text-5xl text-start pb-11 text-[#17a2b8] pt-9">
@@ -73,12 +70,6 @@ export default function Developers() {
                 Posted on {new Date().toLocaleDateString()}
               </p>
               <div className="flex items-center gap-2 mt-2">
-                <button className="flex items-center gap-1 bg-gray-200 p-1 rounded-md">
-                  <FaRegThumbsUp className="text-gray-600" />
-                </button>
-                <button className="flex items-center gap-1 bg-gray-200 p-1 rounded-md">
-                  <FaRegCommentDots className="text-gray-600" />
-                </button>
                 <Link href={`/developers/${profile.user._id}`}>
                   <button className="bg-blue-500 text-white p-1 rounded-md">
                     View Profile

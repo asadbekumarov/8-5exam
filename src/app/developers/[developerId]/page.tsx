@@ -1,9 +1,11 @@
 "use client";
+
 import { baseUrl } from "../../../components/utils/url";
 import axios from "axios";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
+// Ish tajribasi interfeysi
 interface Experience {
   title: string;
   company: string;
@@ -12,6 +14,7 @@ interface Experience {
   description?: string;
 }
 
+// user profili uchun interfeys
 interface DeveloperInterface {
   _id: string;
   user?: {
@@ -35,6 +38,7 @@ interface DeveloperInterface {
   githubusername?: string;
 }
 
+// GitHub reposi uchun interfeys
 interface Repo {
   id: number;
   name: string;
@@ -46,10 +50,11 @@ interface Repo {
 }
 
 const Developers = () => {
-  const { developerId } = useParams();
-  const [info, setInfo] = useState<DeveloperInterface | null>(null);
-  const [github, setGithub] = useState<Repo[] | null>(null);
+  const { developerId } = useParams(); // urldan developer idni olish
+  const [info, setInfo] = useState<DeveloperInterface | null>(null); // Dasturchi ma'lumotlarini saqlash
+  const [github, setGithub] = useState<Repo[] | null>(null); // GitHub reposi ma'lumotlarini saqlash
 
+  // user ma'lumotlarini olish uchun API chaqiruv
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -61,10 +66,11 @@ const Developers = () => {
     };
 
     if (developerId) {
-      fetchUserData();
+      fetchUserData(); // Agar developerId mavjud bo‘lsa, api chaqiruvni bajar
     }
   }, [developerId]);
 
+  // GitHub reposini olish uchun api chaqiruv
   useEffect(() => {
     const fetchGithubData = async () => {
       if (!info?.githubusername) return;
@@ -72,21 +78,21 @@ const Developers = () => {
         const resgithub = await axios.get(
           `${baseUrl}profile/github/${info.githubusername}`
         );
-        setGithub(resgithub.data);
+        setGithub(resgithub.data); 
       } catch (error) {
         console.error("Error fetching GitHub data:", error);
       }
     };
 
-    fetchGithubData();
-  }, [info?.githubusername]);
+    fetchGithubData(); 
+  }, [info?.githubusername]); // GitHub username o‘zgarsa, qayta ishga tushadi
 
   return (
     <div className="max-w-4xl mx-auto py-10 px-6">
       <div className="bg-white shadow-lg rounded-xl p-6 flex flex-col items-center">
         <img
-          src={info?.user?.avatar}
-          alt={info?.user?.name}
+          src={info?.user?.avatar} 
+          alt={info?.user?.name} 
           className="w-36 h-36 rounded-full border-4 border-gray-200"
         />
 
@@ -95,6 +101,7 @@ const Developers = () => {
         <p className="text-gray-500 mt-2">{info?.location}</p>
         <p className="text-gray-700 text-center mt-2 px-4">{info?.bio}</p>
 
+        {/* user ko‘nikmalari (skills) */}
         {info?.skills && (
           <div className="mt-4">
             <h4 className="text-lg font-semibold text-gray-700">Skills:</h4>
@@ -111,6 +118,7 @@ const Developers = () => {
           </div>
         )}
 
+        {/* Ta'lim (education) */}
         {info?.education && info.education.length > 0 && (
           <div className="w-full mt-8">
             <h3 className="text-xl font-semibold text-gray-800 text-center">
@@ -136,6 +144,8 @@ const Developers = () => {
             </div>
           </div>
         )}
+
+        {/* Ish tajribasi (experience) */}
         {info?.experience && info.experience.length > 0 && (
           <div className="w-full mt-8">
             <h3 className="text-xl font-semibold text-gray-800 text-center">
@@ -162,6 +172,7 @@ const Developers = () => {
           </div>
         )}
 
+        {/* GitHub repositoriysi */}
         <div className="w-full mt-8">
           <h3 className="text-xl font-semibold text-gray-800 text-center">
             GitHub Repositories

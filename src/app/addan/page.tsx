@@ -1,38 +1,40 @@
 "use client";
-import { baseUrl } from "../../components/utils/url";
-import axios from "axios";
+import { baseUrl } from "../../components/utils/url"; 
+import axios from "axios"; 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 const AddExperience = () => {
-  const router = useRouter();
-  const [title, setTitle] = useState<string>("");
+  const router = useRouter(); // Router uchun obyektini yaratish
+  
+  // Form ma'lumotlarini saqlash uchun state
+  const [title, setTitle] = useState<string>(""); 
   const [company, setCompany] = useState<string>("");
   const [location, setLocation] = useState<string>("");
-  const [from, setFrom] = useState<string>("");
-  const [to, setTo] = useState<string>("");
+  const [from, setFrom] = useState<string>(""); 
+  const [to, setTo] = useState<string>(""); 
   const [description, setDescription] = useState<string>("");
   const [currentJob, setCurrentJob] = useState<boolean>(false);
 
+  // Ish joyini qo‘shish uchun funksiya
   const addexp = async (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault(); 
     try {
       const res = await axios.put(
         `${baseUrl}profile/experience`,
-        { title, company, from, to },
+        { title, company, from, to }, // yuborilayotgan malumotlar
         {
           headers: {
-            "x-auth-token": localStorage.getItem("token"),
+            "x-auth-token": localStorage.getItem("token"), 
             "Content-Type": "application/json",
           },
         }
       );
-      console.log(res.data);
       if (res.status === 200) {
-        router.push("/dashboard");
+        router.push("/dashboard"); // agar status 200 bolsa otadi
       }
     } catch (error: any) {
-      console.error(error.response?.data || error);
+      console.error(error.response?.data || error); 
     }
   };
 
@@ -40,7 +42,7 @@ const AddExperience = () => {
     <div className="max-w-4xl mx-auto p-6">
       <h1 className="text-4xl font-bold text-[#0f3352]">Add An Experience</h1>
       <p className="text-gray-600 mt-2">
-        💼 Add any developer/programming positions that you have had in the past
+         Add any developer/programming positions that you have had in the past
       </p>
 
       <form onSubmit={addexp} className="mt-6 space-y-4">
@@ -52,6 +54,7 @@ const AddExperience = () => {
           onChange={(e) => setTitle(e.target.value)}
           className="w-full p-2 border rounded-md"
         />
+        
         <input
           type="text"
           placeholder="* Company"
@@ -60,14 +63,13 @@ const AddExperience = () => {
           onChange={(e) => setCompany(e.target.value)}
           className="w-full p-2 border rounded-md"
         />
-        <input
+                <input
           type="text"
           placeholder="Location"
           value={location}
           onChange={(e) => setLocation(e.target.value)}
           className="w-full p-2 border rounded-md"
         />
-
         <div className="flex flex-col gap-2">
           <label className="text-gray-700">From Date</label>
           <input
@@ -78,7 +80,6 @@ const AddExperience = () => {
             className="w-full p-2 border rounded-md"
           />
         </div>
-
         <div className="flex items-center gap-2">
           <input
             type="checkbox"
@@ -88,7 +89,6 @@ const AddExperience = () => {
           />
           <label className="text-gray-700">Current Job</label>
         </div>
-
         {!currentJob && (
           <div className="flex flex-col gap-2">
             <label className="text-gray-700">To Date</label>
@@ -100,14 +100,12 @@ const AddExperience = () => {
             />
           </div>
         )}
-
         <textarea
           placeholder="Job Description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           className="w-full p-2 border rounded-md h-32"
         />
-
         <div className="flex gap-4">
           <button
             type="submit"

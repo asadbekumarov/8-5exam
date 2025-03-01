@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -11,14 +10,14 @@ const Header: React.FC = () => {
 
   useEffect(() => {
     const checkToken = () => {
-      setToken(localStorage.getItem("token"));
+      setToken(localStorage.getItem("token")); // Brauzerning localStorage'idan tokenni olib, state ga saqlash.
     };
 
-    checkToken();
-    window.addEventListener("storage", checkToken);
+    checkToken(); // Dastlab komponent yuklanganda tokenni tekshirish.
+    window.addEventListener("storage", checkToken); // LocalStorage o‘zgarishlarini kuzatish uchun event qo‘shish.
 
     return () => {
-      window.removeEventListener("storage", checkToken);
+      window.removeEventListener("storage", checkToken); // Komponent unmount bo‘lganda eventni olib tashlash.
     };
   }, []);
 
@@ -27,11 +26,11 @@ const Header: React.FC = () => {
       setToken(localStorage.getItem("token"));
     }, 1000);
 
-    return () => clearInterval(interval);
+    return () => clearInterval(interval); // Komponent unmount bo‘lganda intervalni to‘xtatish.
   }, []);
 
   const logOut = () => {
-    localStorage.removeItem("token");
+    localStorage.removeItem("token"); // Foydalanuvchini tizimdan chiqish uchun tokenni o‘chirish.
     setToken(null);
     router.push("/");
     toast.success("Muvaffaqiyatli bajarildi!");
@@ -41,7 +40,6 @@ const Header: React.FC = () => {
     <>
       <nav className="bg-[#484d53] text-white p-4 shadow-md">
         <div className="container mx-auto flex justify-between items-center">
-          {/* Logo */}
           <Link
             href="/"
             className="text-2xl font-bold flex items-center space-x-2"
@@ -49,8 +47,6 @@ const Header: React.FC = () => {
             <span className="text-cyan-400">{"</>"}</span>
             <span>DevConnector</span>
           </Link>
-
-          {/* Navigation Links */}
           <ul className="flex items-center space-x-6">
             <li>
               <Link

@@ -1,35 +1,37 @@
 "use client";
-import { baseUrl } from "../../components/utils/url";
-import axios from "axios";
+import { baseUrl } from "../../components/utils/url"; 
+import axios from "axios"; 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-
+import { useRouter } from "next/navigation"; 
+import { useState } from "react"; 
 const Edu = () => {
-  const [current, setCurrent] = useState(false);
-  const router = useRouter();
-  const [school, setSchool] = useState<string>("");
-  const [degree, setDegree] = useState<string>("");
-  const [fieldofstudy, setFieldofstudy] = useState<string>("");
-  const [from, setFrom] = useState<string>("");
-  const [to, setTo] = useState<string>("");
-  const [description, setDescription] = useState<string>("");
-  const [currentJob, setCurrentJob] = useState<boolean>(false);
+  const [current, setCurrent] = useState(false); 
+  const router = useRouter(); // Router obyekti sahifalarni yo‘naltirish uchun.
 
+  // Foydalanuvchidan olinadigan ma'lumotlar uchun state-lar.
+  const [school, setSchool] = useState<string>(""); // Maktab yoki Bootcamp nomi.
+  const [degree, setDegree] = useState<string>(""); // Diplom yoki sertifikat nomi.
+  const [fieldofstudy, setFieldofstudy] = useState<string>(""); // Ta'lim sohasi.
+  const [from, setFrom] = useState<string>(""); // Boshlanish sanasi.
+  const [to, setTo] = useState<string>(""); 
+  const [description, setDescription] = useState<string>(""); 
+  const [currentJob, setCurrentJob] = useState<boolean>(false); 
+
+  // Foydalanuvchi formani yuborganda ishlaydigan funksiya.
   const Edu = async (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault(); 
     try {
       const res = await axios.put(
-        `${baseUrl}profile/education`,
-        { school, degree, fieldofstudy, from, to },
+        `${baseUrl}profile/education`, // API endpoint.
+        { school, degree, fieldofstudy, from, to }, // Jo‘natilayotgan ma'lumotlar.
         {
           headers: {
-            "x-auth-token": localStorage.getItem("token"),
-            "Content-Type": "application/json",
+            "x-auth-token": localStorage.getItem("token"), 
+            "Content-Type": "application/json", 
           },
         }
       );
-      console.log(res.data);
+      // Agar so‘rov muvaffaqiyatli bajarilsa, foydalanuvchi dashboard sahifasiga yo‘naltiriladi.
       if (res.status === 200) {
         router.push("/dashboard");
       }
@@ -66,7 +68,6 @@ const Edu = () => {
           placeholder="Field of Study"
           className="w-full p-2 border rounded-md mb-4"
         />
-
         <label className="block text-gray-700">From Date</label>
         <input
           type="date"
@@ -74,7 +75,6 @@ const Edu = () => {
           onChange={(e) => setFrom(e.target.value)}
           className="w-full p-2 border rounded-md mb-4"
         />
-
         <div className="flex items-center mb-4">
           <input
             type="checkbox"
@@ -84,7 +84,6 @@ const Edu = () => {
           />
           <span>Current School</span>
         </div>
-
         {!current && (
           <>
             <label className="block text-gray-700">To Date</label>
@@ -96,12 +95,10 @@ const Edu = () => {
             />
           </>
         )}
-
         <textarea
           placeholder="Program Description"
           className="w-full p-2 border rounded-md mb-4 h-24"
         ></textarea>
-
         <div className="flex space-x-4">
           <button
             className="px-4 py-2 bg-[#0f3352] text-white rounded-md"
@@ -119,5 +116,4 @@ const Edu = () => {
     </div>
   );
 };
-
 export default Edu;
